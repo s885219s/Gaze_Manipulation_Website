@@ -1,0 +1,7 @@
+weights*
+__*
+static/uploads/*
+model/test_imgs/*
+*.png
+*.jpg
+*.mp4

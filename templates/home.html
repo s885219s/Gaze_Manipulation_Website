@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Flx-gaze Demo Page">
+    <meta name="author" content="Yu-Cheng Chen">
+    
+    <!-- Bootsstrap CSS-->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='css/custom.css')}}">
+    <title>Flx-gaze Demo Page</title>
+</head>
+<body>
+<!-- Page Content -->
+<div class="container">
+    <!-- Page Header -->
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+            <h1 class="page-header">Flx-gaze Demo Page</h1>
+            <p> In our work, we build a real-time gaze redirection system to solve parallax problem which commonly occurs when users doing video chat.
+                We train a warping-based CNN model with novelly designed loss functions to redirect eye gaze which outperforms the current 
+                state-of-the-art, <a href="http://sites.skoltech.ru/compvision/projects/deepwarp/">DeepWarp</a>, in most of the evaluations.
+
+            <p>If you are interested in our work, <a href="{{ url_for('static', filename='paper/flx-gaze_demo.pdf')}}"><b>here</b></a> 
+                is our paper in <a href="http://www.mmsys2018.org/program/accepted-papers/">ACM MMSys 2018 demo track</a>.
+                
+            <p>This demo page shows the ability of our model of eye manipulation. 
+                Pick an image with a face in it and click on <b>"Let's <i>whatever</i>!"</b> button.
+                The result should appear below shortly afterwards (be patient though).
+            <p><I>P.S.</I> The face image with both big and clear eyes will have the best result.
+            <ul>
+                <li>Supported image extensions: <code>.png</code>, <code>.jpg</code>, <code>.jpeg</code></li>
+                <li>Maximum file size: <tt>300kB</tt>.</li>
+                <li>Maximum image dimension: <tt>400px</tt>. Will be resized if exeeds the limit.</li>
+                <li>Minimum image dimensions <i>(after resize)</i>: <tt>200x25px</tt>.</li>
+            </ul>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                                {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+            <form id="submit-form" class="form-inline" method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <div class="input-group">
+                        {{ form.photo(class="filestyle", **{'data-icon':"false" , 'data-buttonBefore':"true"}) }}
+                        {% if form.photo.errors %}
+                            {% for error in form.photo.errors %}
+                                <span class="text-danger">{{ error }}</span></br>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div> &nbsp;
+                <button class="btn btn-default btn-action" type="submit" name="submit" value="roll" disabled>Let's roll!</button>
+                <button class="btn btn-default btn-action" type="submit" name="submit" value="scroll" disabled>Let's scroll!</button>
+                <button class="btn btn-default btn-action" type="submit" name="submit" value="shift" disabled>Let's shift!</button>
+            </form>
+            <br />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+            <div id="status-progress" class="alert alert-info" role="alert" style="display: None;">
+                <span class="glyphicon glyphicon-refresh spinning"></span> <b>Wait for it...</b>
+            </div>
+            <div id="output" class="panel panel-success" style="display: none;">
+                <div class="panel-heading">
+                    <b>Result</b>
+                </div>
+                <div class="panel-body" style="overflow-x: scroll;">
+                    <!--<img src="{{ image_file }}">-->
+                    <video width="320" height="240" autoplay loop id="output-video">
+                        <source src="{{ video_file }}" type="video/mp4">
+                    </video>
+                </div>
+            </div>   
+            
+        </div>
+    </div>
+    <footer>
+        <div class="row" style="margin-top: -1em;">
+            <div class="col-lg-8 col-lg-offset-2 text-right">
+                <hr style="margin-bottom: 0.5em" />
+                <p class="text-muted"><small>Template copied from <a href="http://163.172.78.19/">deepWarp</a>.</small></p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-filestyle.min.js')}}" type="text/javascript"></script>
+<script>
+    $(document).ready(function(){
+        if($('#output-video source').attr('src') != ''){
+            $('#output').show()
+        }
+    });
+    $('input:file').change(function(){
+        if ($(this).val()) {
+            $('button:submit').attr('disabled',false)
+        }
+    });
+    $('.btn-action').click(function(event) {
+        $('#status-progress').show()
+    });
+</script>
+</script>
+</body>
+</html>
