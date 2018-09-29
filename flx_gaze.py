@@ -166,6 +166,7 @@ def convert_images_to_video(photo_file, video_res = [320,240], pixel_cut = [3,4]
                 frame_list.append(frame)
     print(frame_list[0].shape)
     skvideo.io.vwrite(output_video_path,frame_list,inputdict={},outputdict={'-r':str(nframe_per_demo),'-pix_fmt': 'yuvj420p'},verbosity=1)
+    os.remove('./static/uploads/'+ photo_file)
     return output_video_path
 
 @app.route("/", methods=['GET','POST'])

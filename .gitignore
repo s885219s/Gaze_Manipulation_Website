@@ -5,3 +5,4 @@ model/test_imgs/*
 *.png
 *.jpg
 *.mp4
+venv/
